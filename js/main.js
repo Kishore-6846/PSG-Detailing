@@ -186,14 +186,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const allAnchorLinks = document.querySelectorAll('a[href^="#"]:not(.open-enquiry-modal)');
     allAnchorLinks.forEach(anchor => {
-        anchor.addEventListener('click', function(e) {
+        anchor.addEventListener('click', function (e) {
             const href = this.getAttribute('href');
             if (href && href.startsWith('#') && href.length > 1) {
                 e.preventDefault();
                 closeMobileMenu();
-                setTimeout(() => {
-                    scrollToTarget(href);
-                }, 60);
+                scrollToTarget(href);
                 history.pushState(null, null, href);
             }
         });
@@ -429,5 +427,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         resetTestimonialInterval();
+    }
+
+    // =========================================================================
+    // 11. Scroll Reveal Animations
+    // =========================================================================
+    const revealElements = document.querySelectorAll('.reveal-fade-up, .reveal-fade-left, .reveal-fade-right, .reveal-zoom-in');
+
+    if ('IntersectionObserver' in window) {
+        const revealObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('reveal-active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.08,
+            rootMargin: '0px 0px -40px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+    } else {
+        revealElements.forEach(el => el.classList.add('reveal-active'));
     }
 });
